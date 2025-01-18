@@ -18,14 +18,20 @@ return {
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
+        add = { text = '┃' },
+        change = { text = '┃' },
+        delete = { text = '' },
+        topdelete = { text = '' },
         changedelete = { text = '~' },
+        untracked = { text = '┆' },
       },
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
+
+        -- custom colors
+        vim.cmd [[highlight GitSignsAdd guifg=#99c07a guibg=None]]
+        vim.cmd [[highlight GitSignsChange guifg=#569cd6 guibg=None]]
+        vim.cmd [[highlight GitSignsDelete guifg=#e81515 guibg=None]]
 
         local function map(mode, l, r, opts)
           opts = opts or {}

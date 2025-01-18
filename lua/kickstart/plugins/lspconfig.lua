@@ -159,6 +159,7 @@ return {
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
+            vim.lsp.inlay_hint.enable(true)
           end
         end,
       })
@@ -207,11 +208,29 @@ return {
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
+      local util = require 'lspconfig/util'
+
+      require('lspconfig').veridian.setup {
+        cmd = { 'veridian' },
+        filetypes = { 'verilog', 'systemverilog' },
+        root_dir = function(fname)
+          local root_pattern = util.root_pattern('veridian.yml', '.git')
+          local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
+          return root_pattern(filename) or util.path.dirname(filename)
+        end,
+      }
+
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {
+          cmd = {
+            '/usr/bin/clangd',
+            '--query-driver=/usr/bin/gcc',
+            '--background-index',
+          },
+        },
+        pyright = {},
+        ruff = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -253,6 +272,7 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'verible',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
