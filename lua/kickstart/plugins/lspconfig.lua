@@ -211,15 +211,15 @@ return {
 
       local util = require 'lspconfig/util'
 
-      require('lspconfig').veridian.setup {
-        cmd = { 'veridian' },
-        filetypes = { 'verilog', 'systemverilog' },
-        root_dir = function(fname)
-          local root_pattern = util.root_pattern('veridian.yml', '.git')
-          local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
-          return root_pattern(filename) or util.path.dirname(filename)
-        end,
-      }
+      -- require('lspconfig').veridian.setup {
+      --   cmd = { 'veridian' },
+      --   filetypes = { 'verilog', 'systemverilog' },
+      --   root_dir = function(fname)
+      --     local root_pattern = util.root_pattern('veridian.yml', '.git')
+      --     local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
+      --     return root_pattern(filename) or util.path.dirname(filename)
+      --   end,
+      -- }
 
       local servers = {
         clangd = {
@@ -231,6 +231,14 @@ return {
         },
         pyright = {},
         ruff = {},
+        verible = {
+          filetypes = { 'verilog', 'systemverilog' },
+          root_dir = function(fname)
+            local root_pattern = util.root_pattern('verible.filelist', '.git')
+            local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
+            return root_pattern(filename) or util.path.dirname(filename)
+          end,
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -272,7 +280,6 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'verible',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
