@@ -211,15 +211,17 @@ return {
 
       local util = require 'lspconfig/util'
 
-      -- require('lspconfig').veridian.setup {
-      --   cmd = { 'veridian' },
-      --   filetypes = { 'verilog', 'systemverilog' },
-      --   root_dir = function(fname)
-      --     local root_pattern = util.root_pattern('veridian.yml', '.git')
-      --     local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
-      --     return root_pattern(filename) or util.path.dirname(filename)
-      --   end,
-      -- }
+      -- defined separately to avoid autoinstall with mason
+      require('lspconfig').veridian.setup {
+        cmd = { 'veridian' },
+        filetypes = { 'verilog', 'systemverilog' },
+        root_dir = function(fname)
+          -- local root_pattern = util.root_pattern('veridian.yml', '.git')
+          -- local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
+          -- return root_pattern(filename) or util.path.dirname(filename)
+          return vim.fs.dirname(vim.fs.find('.git', { path = fname, upward = true })[1])
+        end,
+      }
 
       local servers = {
         clangd = {
@@ -231,14 +233,15 @@ return {
         },
         pyright = {},
         ruff = {},
-        verible = {
-          filetypes = { 'verilog', 'systemverilog' },
-          root_dir = function(fname)
-            local root_pattern = util.root_pattern('verible.filelist', '.git')
-            local filename = util.path.is_absolute(fname) and fname or util.path.join(vim.loop.cwd(), fname)
-            return root_pattern(filename) or util.path.dirname(filename)
-          end,
-        },
+        -- verible = {
+        --   filetypes = { 'verilog', 'systemverilog' },
+        --   root_dir = function(fname)
+        --     -- local root_pattern = util.root_pattern('verible.filelist', '.git')
+        --     -- local filename = util.path.is_absolute(fname) and fname or vim.fs.joinpath(vim.loop.cwd(), fname)
+        --     -- return root_pattern(filename) or vim.fs.dirname(filename)
+        --     return vim.fs.dirname(vim.fs.find('.git', { path = fname, upward = true })[1])
+        --   end,
+        -- },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
