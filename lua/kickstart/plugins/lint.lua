@@ -7,19 +7,20 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
-        verilog = { 'verilator' },
-        systemverilog = { 'verilator' },
+        -- verilog = { 'verilator' },
+        -- systemverilog = { 'verilator' },
       }
 
-      local verilator_lint = require('lint').linters.verilator
-      verilator_lint.args = {
-        '-sv',
-        '-Wall',
-        '--bbox-sys',
-        '--bbox-unsup',
-        '--lint-only',
-        '-I./src',
-      }
+      -- local verilator_lint = require('lint').linters.verilator
+      -- verilator_lint.args = {
+      --   '-sv',
+      --   '-Wall',
+      --   '--bbox-sys',
+      --   '--bbox-unsup',
+      --   '--lint-only',
+      --   '--timing',
+      --   '-I./src',
+      -- }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
       -- instead set linters_by_ft like this:
